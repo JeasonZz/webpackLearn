@@ -1,7 +1,6 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MinCssExtractPlugin = require("mini-css-extract-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 console.log("环境变量", process.env.NODE_ENV, __dirname);
 module.exports = {
@@ -11,8 +10,21 @@ module.exports = {
     filename: "bundle.js",
     path: path.join(__dirname, "dist"),
   },
+  devtool: "source-map",
   module: {
     rules: [
+      //为了防止config过于臃肿所以另外写在.babelrc.js中配置
+      // {
+      //   test: /\.js/i,
+      //   use: [
+      //     {
+      //       loader: "babel-loader",
+      //       options: {
+      //         presets: ["@babel/preset-env"],
+      //       },
+      //     },
+      //   ],
+      // },
       {
         test: /\.(s[ac]|c)ss$/i, //匹配所有的scss sass css文件
         use: [
@@ -23,20 +35,6 @@ module.exports = {
           "sass-loader",
         ],
       },
-      // {
-      //   test: /\.(jpe?g|png|gif)$/i,
-      //   //使用file-loader解决webpack不认识图片的问题
-      //   use: [
-      //     // "file-loader",
-      //     {
-      //       loader: "url-loader",
-      //       options: {
-      //         name: "[name].[hash:8].[ext]",
-      //         limit: 50 * 1024,
-      //       },
-      //     },
-      //   ],
-      // },
       {
         test: /\.(jpe?g|png|gif)$/i,
         type: "asset",
@@ -64,8 +62,8 @@ module.exports = {
     ],
   },
   plugins: [
-    //样式文件单独打包
-    new MinCssExtractPlugin({
+    //样式文件单独打包 分离样式文件
+    new MiniCssExtractPlugin({
       filename: "[name].[hash:8].css",
     }),
     //指定打包模板HTML
