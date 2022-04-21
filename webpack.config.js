@@ -2,7 +2,10 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-console.log("环境变量", process.env.NODE_ENV, __dirname);
+// console.log("环境变量", process.env.NODE_ENV, __dirname);
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
@@ -80,5 +83,10 @@ module.exports = {
     },
     compress: true,
     port: 8088,
+  },
+  resolve: {
+    alias: {
+      "@": resolve("src"),
+    },
   },
 };
