@@ -15,8 +15,11 @@ module.exports = {
     path: path.join(__dirname, "dist"),
   },
   devtool: "source-map",
+  cache: {
+    type: "filesystem",//persistent cache 持久缓存
+  },
   module: {
-    //ignore resolve these files' import and require
+    //ignore resolve  'import' and 'require' in these files
     noParse: /jquery|lodash/,
     rules: [
       //为了防止config过于臃肿所以另外写在.babelrc.js中配置
@@ -27,6 +30,7 @@ module.exports = {
       //       loader: "babel-loader",
       //       options: {
       //         presets: ["@babel/preset-env"],
+      //         cacheDirectory:true   //open cache switch,other loader cache can use 'cache-loader'
       //       },
       //     },
       //   ],
@@ -37,7 +41,15 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           // "style-loader"
+          {
+            //open more thread to pack it
+            loader: "thread-loader",
+            otpions: {
+              worker: 3,
+            },
+          },
           MiniCssExtractPlugin.loader,
+          "cache-loader", // get prevent loaders' cache and improve the pack speed
           "css-loader",
           "postcss-loader",
           "sass-loader",
