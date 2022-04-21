@@ -2,7 +2,8 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 // console.log("环境变量", process.env.NODE_ENV, __dirname);
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -16,7 +17,7 @@ module.exports = {
   },
   devtool: "source-map",
   cache: {
-    type: "filesystem",//persistent cache 持久缓存
+    type: "filesystem", //persistent cache 持久缓存
   },
   module: {
     //ignore resolve  'import' and 'require' in these files
@@ -92,10 +93,15 @@ module.exports = {
     }),
     //清理旧文件
     new CleanWebpackPlugin(),
+    //analyze bundle's somthing
+    new BundleAnalyzerPlugin({
+      // analyzerMode: "disabled",//dont open serve of showing pack report
+      // generateStatsFile: true,// is to create "stats,json" file
+    }),
     new webpack.IgnorePlugin({
       resourceRegExp: /^\.\/locale$/, //test sources request path
       contextRegExp: /moment/, //test sources context path
-    }),
+    })(),
   ],
   devServer: {
     //静态文件打包
