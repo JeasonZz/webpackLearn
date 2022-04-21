@@ -4,6 +4,10 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const purgeCssWebpackPlugin = require("purgecss-webpack-plugin");
+const glob = require("glob");
 // console.log("环境变量", process.env.NODE_ENV, __dirname);
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -98,11 +102,21 @@ module.exports = {
       // analyzerMode: "disabled",//dont open serve of showing pack report
       // generateStatsFile: true,// is to create "stats,json" file
     }),
+    //clean up useless CSS
+    new purgeCssWebpackPlugin({
+      path: glob.sync(`${PATH.src}/**/*`, { nodir: true }),
+    }),
     new webpack.IgnorePlugin({
       resourceRegExp: /^\.\/locale$/, //test sources request path
       contextRegExp: /moment/, //test sources context path
     })(),
   ],
+  //CSS gzip
+  optimization: {
+    minimize: true,
+    minimizer: [new OptimizeCssAssetsPlugin({}), new TerserPlugin({})],
+  },
+
   devServer: {
     //静态文件打包
     static: {
@@ -111,6 +125,7 @@ module.exports = {
     compress: true,
     port: 8088,
   },
+
   //if you have own loader,you need config it for finding it quickly
   resolveLoader: {
     modules: ["node_modules", resolve("loader")],
